@@ -1,0 +1,67 @@
+graph TD
+    subgraph UI["UI (React + Vite)"]
+        REACT["React SPA<br/>ui/src/"]
+        VITE["Vite dev server"]
+    end
+
+    subgraph Server["Server (Node.js)"]
+        API["API Routes<br/>server/src/"]
+        HEARTBEAT["Heartbeat Scheduler<br/>Agent wake/check cycles"]
+        GOVERNANCE["Governance Engine<br/>Approvals, budgets, overrides"]
+        TICKETS["Ticket System<br/>Task checkout, delegation"]
+    end
+
+    subgraph Packages["Shared Packages"]
+        DB["@paperclipai/db<br/>Drizzle ORM + migrations"]
+        SHARED["@paperclipai/shared<br/>Types, utils"]
+        ADAPTERS["@paperclipai/adapters<br/>Agent runtime adapters"]
+        ADAPTER_UTILS["@paperclipai/adapter-utils<br/>Shared adapter helpers"]
+    end
+
+    subgraph Storage["Data Layer"]
+        PG["PostgreSQL<br/>(embedded or external)"]
+    end
+
+    subgraph Agents["External Agents"]
+        OPENCLAW["OpenClaw"]
+        CLAUDE["Claude Code"]
+        CODEX["Codex"]
+        CURSOR["Cursor"]
+        BASH["Bash scripts"]
+        HTTP["HTTP endpoints"]
+    end
+
+    subgraph CLI["CLI"]
+        CLIPCLI["cli/<br/>paperclipai CLI<br/>(onboard, manage)"]
+    end
+
+    REACT --> API
+    API --> DB
+    API --> HEARTBEAT
+    API --> GOVERNANCE
+    API --> TICKETS
+    DB --> PG
+    HEARTBEAT --> ADAPTERS
+    ADAPTERS --> ADAPTER_UTILS
+    ADAPTERS --> OPENCLAW
+    ADAPTERS --> CLAUDE
+    ADAPTERS --> CODEX
+    ADAPTERS --> CURSOR
+    ADAPTERS --> BASH
+    ADAPTERS --> HTTP
+    TICKETS --> SHARED
+    CLIPCLI --> API
+
+    classDef ui fill:#4a9eff,color:#fff
+    classDef server fill:#ff6b6b,color:#fff
+    classDef pkg fill:#ff9f43,color:#fff
+    classDef store fill:#2ed573,color:#fff
+    classDef agent fill:#a55eea,color:#fff
+    classDef cli fill:#ffa502,color:#fff
+
+    class REACT,VITE ui
+    class API,HEARTBEAT,GOVERNANCE,TICKETS server
+    class DB,SHARED,ADAPTERS,ADAPTER_UTILS pkg
+    class PG store
+    class OPENCLAW,CLAUDE,CODEX,CURSOR,BASH,HTTP agent
+    class CLIPCLI cli
