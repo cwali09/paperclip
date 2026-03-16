@@ -9,11 +9,22 @@ graph TD
         HEARTBEAT["Heartbeat Scheduler<br/>Agent wake/check cycles"]
         GOVERNANCE["Governance Engine<br/>Approvals, budgets, overrides"]
         TICKETS["Ticket System<br/>Task checkout, delegation"]
+        DOCS["Document Service<br/>Issue documents + revisions"]
+    end
+
+    subgraph Plugins["Plugin System"]
+        PLUGIN_REG["Plugin Registry<br/>Install, enable, configure"]
+        PLUGIN_LOADER["Plugin Loader<br/>Manifest validation + loading"]
+        PLUGIN_WORKER["Worker Manager<br/>Sandboxed plugin workers"]
+        PLUGIN_SDK["Plugin SDK<br/>@paperclipai/plugin-sdk"]
+        PLUGIN_EVENTS["Event Bus<br/>Plugin subscriptions"]
+        PLUGIN_JOBS["Job Scheduler<br/>Cron + one-shot jobs"]
+        PLUGIN_UI["UI Slots + Bridge<br/>Plugin panels in dashboard"]
     end
 
     subgraph Packages["Shared Packages"]
         DB["@paperclipai/db<br/>Drizzle ORM + migrations"]
-        SHARED["@paperclipai/shared<br/>Types, utils"]
+        SHARED["@paperclipai/shared<br/>Types, utils, validators"]
         ADAPTERS["@paperclipai/adapters<br/>Agent runtime adapters"]
         ADAPTER_UTILS["@paperclipai/adapter-utils<br/>Shared adapter helpers"]
     end
@@ -36,10 +47,13 @@ graph TD
     end
 
     REACT --> API
+    REACT --> PLUGIN_UI
     API --> DB
     API --> HEARTBEAT
     API --> GOVERNANCE
     API --> TICKETS
+    API --> DOCS
+    API --> PLUGIN_REG
     DB --> PG
     HEARTBEAT --> ADAPTERS
     ADAPTERS --> ADAPTER_UTILS
@@ -50,7 +64,14 @@ graph TD
     ADAPTERS --> BASH
     ADAPTERS --> HTTP
     TICKETS --> SHARED
+    DOCS --> DB
     CLIPCLI --> API
+    PLUGIN_REG --> PLUGIN_LOADER
+    PLUGIN_LOADER --> PLUGIN_WORKER
+    PLUGIN_WORKER --> PLUGIN_SDK
+    PLUGIN_WORKER --> PLUGIN_EVENTS
+    PLUGIN_EVENTS --> PLUGIN_JOBS
+    PLUGIN_UI --> PLUGIN_WORKER
 
     classDef ui fill:#4a9eff,color:#fff
     classDef server fill:#ff6b6b,color:#fff
@@ -58,10 +79,12 @@ graph TD
     classDef store fill:#2ed573,color:#fff
     classDef agent fill:#a55eea,color:#fff
     classDef cli fill:#ffa502,color:#fff
+    classDef plugin fill:#e056fd,color:#fff
 
     class REACT,VITE ui
-    class API,HEARTBEAT,GOVERNANCE,TICKETS server
+    class API,HEARTBEAT,GOVERNANCE,TICKETS,DOCS server
     class DB,SHARED,ADAPTERS,ADAPTER_UTILS pkg
     class PG store
     class OPENCLAW,CLAUDE,CODEX,CURSOR,BASH,HTTP agent
     class CLIPCLI cli
+    class PLUGIN_REG,PLUGIN_LOADER,PLUGIN_WORKER,PLUGIN_SDK,PLUGIN_EVENTS,PLUGIN_JOBS,PLUGIN_UI plugin

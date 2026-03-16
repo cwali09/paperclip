@@ -44,18 +44,24 @@ React UI (ui/) ──HTTP──> API Server (server/)
 | **Goal** | Hierarchical objectives — every task traces back to company mission |
 | **Governance** | Approval gates, budget enforcement, config versioning with rollback |
 | **Adapter** | Runtime-specific integration (packages/adapters/) for each agent type |
+| **Plugin** | Third-party extension with manifest, worker, optional UI — sandboxed execution |
+| **Plugin SDK** | `@paperclipai/plugin-sdk` — define manifests, tools, UI components, event handlers |
+| **Document** | Rich content attached to issues with revision history |
 
 ## Monorepo Structure
 
 | Package | Path | Purpose |
 |---------|------|---------|
-| Server | `server/` | API routes, heartbeat scheduler, governance |
-| UI | `ui/` | React dashboard (Vite, shadcn) |
+| Server | `server/` | API routes, heartbeat scheduler, governance, plugin runtime |
+| UI | `ui/` | React dashboard (Vite, shadcn, plugin slots) |
 | CLI | `cli/` | `paperclipai` CLI for onboarding and management |
 | DB | `packages/db/` | Drizzle ORM schema, migrations, PostgreSQL |
-| Shared | `packages/shared/` | Shared types and utilities |
+| Shared | `packages/shared/` | Shared types, utilities, and validators |
 | Adapters | `packages/adapters/` | Agent runtime adapters |
 | Adapter Utils | `packages/adapter-utils/` | Shared adapter helpers |
+| Plugin SDK | `packages/plugins/sdk/` | Plugin authoring SDK (manifest, worker, UI) |
+| Plugin Scaffolder | `packages/plugins/create-paperclip-plugin/` | `npx create-paperclip-plugin` |
+| Plugin Examples | `packages/plugins/examples/` | Hello world, file browser, kitchen sink |
 
 ## Dependencies
 
